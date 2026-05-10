@@ -1,7 +1,13 @@
 package tcp_server;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 
 class Producer implements Runnable {
@@ -14,27 +20,33 @@ class Producer implements Runnable {
 
   @Override
   public void run() {
-    String path = "../messages.txt";
+    readFromSocket();
+  }
+
+  public void readFromSocket() {
+    try (ServerSocket serverSocket = new ServerSocket(8000)) {
+      while (true) {
+        Socket socket = serverSocket.accept();
+        readFromFile(socket);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  public void readFromFile(Socket socket) {
+    // String path = "../messages.txt";
 
     byte[] buff = new byte[8];
-
     StringBuilder str = new StringBuilder();
-    try (InputStream inputStream = new FileInputStream(path)) {
-      int buffReader;
-
-      while ((buffReader = inputStream.read(buff)) != -1) {
-        for (int i = 0; i < buffReader; i++) {
-          char c = (char) buff[i];
-          if (c == '\n') {
-            channel.put(str.toString());
-            str.setLength(0);
-          } else {
-            str.append(String.valueOf(c));
-          }
-        }
+    try (InputStream inputStream = socket.getInputStream()) {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        channel.put(line);
       }
-      System.err.println("end of the line");
-      channel.put("EOF");
+      // channel.put("EOF");
     } catch (Exception e) {
       System.err.println(e);
     }

@@ -15,8 +15,6 @@ class Consumer implements Runnable {
     while (true) {
       try {
         String newLine = channel.take();
-        if (newLine.equals("EOF"))
-          break;
         System.out.printf("read: %s\n", newLine);
       } catch (InterruptedException e) {
         e.printStackTrace();
