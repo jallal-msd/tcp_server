@@ -5,6 +5,7 @@ import java.util.concurrent.BlockingQueue;
 class Consumer implements Runnable {
 
   private BlockingQueue<String> channel;
+  private RequestLine requestLine;
 
   public Consumer(BlockingQueue<String> channel) {
     this.channel = channel;
@@ -14,8 +15,9 @@ class Consumer implements Runnable {
   public void run() {
     while (true) {
       try {
+
         String newLine = channel.take();
-        System.out.printf("read: %s\n", newLine);
+        System.out.println(newLine);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }

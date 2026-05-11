@@ -1,11 +1,9 @@
 package tcp_server;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
@@ -41,10 +39,21 @@ class Producer implements Runnable {
     byte[] buff = new byte[8];
     StringBuilder str = new StringBuilder();
     try (InputStream inputStream = socket.getInputStream()) {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-      String line;
-      while ((line = reader.readLine()) != null) {
-        channel.put(line);
+      int buffReader;
+      while ((buffReader = inputStream.read(buff)) != -1) {
+        for (int i = 0; i < buffReader; i++) {
+          char c = (char) buff[i];
+          if (c == '\n') {
+            str.append('\n');
+            channel.put(str.toString());
+            str.setLength(0);
+          } else {
+            str.append(c);
+          }
+        }
+      }
+      if (str.length() > 0) {
+        channel.put(str.toString());
       }
       // channel.put("EOF");
     } catch (Exception e) {
