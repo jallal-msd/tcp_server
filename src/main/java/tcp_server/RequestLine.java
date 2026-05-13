@@ -6,6 +6,7 @@ public class RequestLine {
   private String target;
   private String httpVersion;
   private String restOfMessage;
+  private int index;
 
   public RequestLine() {
 
@@ -42,4 +43,5 @@ public class RequestLine {
   public void setRestOfMessage(String restOfMessage) {
     this.restOfMessage = restOfMessage;
   }
+
 }

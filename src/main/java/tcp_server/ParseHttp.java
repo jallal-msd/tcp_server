@@ -1,28 +1,92 @@
 package tcp_server;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JPopupMenu.Separator;
+
 class ParseHttp {
 
-  public static RequestLine parse(String s) {
+  public static String separator = "\r\n";
+
+  enum state {
+    stateInit,
+    stateDone,
+    stateError
+  }
+
+  static state sta = state.stateInit;
+
+  public static Request requestFromReader(InputStream read) throws IOException {
+    System.out.println("2 here");
+    Request request = new Request();
+    byte[] tmp = new byte[1024];
+    int ch;
+    ByteArrayOutputStream buff = new ByteArrayOutputStream();
+    while ((ch = read.read(tmp)) != -1) {
+      buff.write(tmp, 0, ch);
+      request = parseByChucks(buff.toByteArray());
+    }
+    return request;
+  }
+
+  public static Request parseByChucks(byte[] buff) {
+    System.out.println("here 1");
+    Request request = new Request();
+    int read = 0;
+    outer: while (sta != state.stateError) {
+      switch (sta) {
+        case stateInit:
+          request = parse(new String(buff));
+          break;
+        case stateDone:
+          break outer;
+      }
+    }
+    return request;
+  }
+
+  public static state done() {
+    return state.stateDone;
+  }
+
+  public static Request parse(String s) {
+    System.out.println("data is " + s);
     RequestLine requestLine = new RequestLine();
-    int endOfLine = s.indexOf("\r\n");
+    int read = 0;
+
+    int endOfLine = s.indexOf(separator);
     if (endOfLine == -1) {
+      sta = state.stateError;
       return null;
     }
     String startOfLine = s.substring(0, endOfLine);
-    String restOfMessage = s.substring(endOfLine + 1, s.length());
+    // String restOfMessage = s.substring(endOfLine + 1, s.length());
+    read += endOfLine + separator.length();
 
     List<String> parts = Arrays.asList(startOfLine.split(" "));
     if (parts.size() != 3) {
       System.err.println("malformed request");
+      sta = state.stateDone;
     } else {
       requestLine.setHttpMethod(parts.get(0));
       requestLine.setTarget(parts.get(1));
       requestLine.setHttpVersion(parts.get(2).split("/")[1]);
-      requestLine.setRestOfMessage(restOfMessage);
+      // requestLine.setRestOfMessage(restOfMessage);
+      sta = state.stateDone;
     }
-    return requestLine;
+
+    Request request = new Request();
+    request.setIndex(read);
+    request.setRequestLine(requestLine);
+    return request;
   }
 }

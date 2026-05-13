@@ -35,7 +35,6 @@ class Producer implements Runnable {
 
   public void readFromFile(Socket socket) {
     // String path = "../messages.txt";
-
     byte[] buff = new byte[8];
     StringBuilder str = new StringBuilder();
     try (InputStream inputStream = socket.getInputStream()) {
