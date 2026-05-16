@@ -4,10 +4,10 @@ import java.util.concurrent.BlockingQueue;
 
 class Consumer implements Runnable {
 
-  private BlockingQueue<String> channel;
+  private BlockingQueue<Request> channel;
   private RequestLine requestLine;
 
-  public Consumer(BlockingQueue<String> channel) {
+  public Consumer(BlockingQueue<Request> channel) {
     this.channel = channel;
   }
 
@@ -15,9 +15,11 @@ class Consumer implements Runnable {
   public void run() {
     while (true) {
       try {
-
-        String newLine = channel.take();
-        System.out.println(newLine);
+        System.out.println("I am here");
+        Request newLine = channel.take();
+        System.out.printf("Method, %s\n", newLine.getRequestLine().getHttpMethod());
+        System.out.printf("target, %s\n", newLine.getRequestLine().getTarget());
+        System.out.printf("version, %s\n", newLine.getRequestLine().getHttpVersion());
       } catch (InterruptedException e) {
         e.printStackTrace();
       }

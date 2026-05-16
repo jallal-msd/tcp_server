@@ -7,12 +7,13 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
+import headers.*;
 
 class Producer implements Runnable {
 
-  private BlockingQueue<String> channel;
+  private BlockingQueue<Request> channel;
 
-  public Producer(BlockingQueue<String> channel) {
+  public Producer(BlockingQueue<Request> channel) {
     this.channel = channel;
   }
 
@@ -23,6 +24,7 @@ class Producer implements Runnable {
 
   public void readFromSocket() {
     try (ServerSocket serverSocket = new ServerSocket(8000)) {
+      System.out.println("port 8000 is listinnig");
       while (true) {
         Socket socket = serverSocket.accept();
         readFromFile(socket);
@@ -38,22 +40,10 @@ class Producer implements Runnable {
     byte[] buff = new byte[8];
     StringBuilder str = new StringBuilder();
     try (InputStream inputStream = socket.getInputStream()) {
-      int buffReader;
-      while ((buffReader = inputStream.read(buff)) != -1) {
-        for (int i = 0; i < buffReader; i++) {
-          char c = (char) buff[i];
-          if (c == '\n') {
-            str.append('\n');
-            channel.put(str.toString());
-            str.setLength(0);
-          } else {
-            str.append(c);
-          }
-        }
-      }
-      if (str.length() > 0) {
-        channel.put(str.toString());
-      }
+      Request request = ParseHttp.requestFromReader(inputStream);
+      System.out.println("out of the parser");
+      channel.put(request);
+
       // channel.put("EOF");
     } catch (Exception e) {
       System.err.println(e);

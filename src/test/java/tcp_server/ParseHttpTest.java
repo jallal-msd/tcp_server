@@ -16,12 +16,11 @@ class ParseHttpTest {
   @Test
   public void testParse() throws IOException {
     String httpHeader = "POST /coffe HTTP/1.1\r\nHost: localhost:8000\r\nUser-Agent: curl/4.1.16\r\nAccept: */*\r\nContent-Type: application/json\r\nContent-Length: 123";
-    String httpHeader1 = "POST /cof\r\n";
-    InputStream reader = new ByteArrayInputStream(httpHeader1.getBytes(StandardCharsets.UTF_8));
+    InputStream reader = new ByteArrayInputStream(httpHeader.getBytes(StandardCharsets.UTF_8));
     Request request = ParseHttp.requestFromReader(reader);
 
     assertEquals("POST", request.getRequestLine().getHttpMethod());
-    assertEquals("/cof", request.getRequestLine().getTarget());
+    assertEquals("/coffe", request.getRequestLine().getTarget());
     // assertEquals("1.1", request.getRequestLine().getHttpVersion());
   }
 }

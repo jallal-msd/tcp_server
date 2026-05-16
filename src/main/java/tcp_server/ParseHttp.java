@@ -26,7 +26,6 @@ class ParseHttp {
   static state sta = state.stateInit;
 
   public static Request requestFromReader(InputStream read) throws IOException {
-    System.out.println("2 here");
     Request request = new Request();
     byte[] tmp = new byte[1024];
     int ch;
@@ -39,7 +38,6 @@ class ParseHttp {
   }
 
   public static Request parseByChucks(byte[] buff) {
-    System.out.println("here 1");
     Request request = new Request();
     int read = 0;
     outer: while (sta != state.stateError) {
@@ -59,10 +57,8 @@ class ParseHttp {
   }
 
   public static Request parse(String s) {
-    System.out.println("data is " + s);
     RequestLine requestLine = new RequestLine();
     int read = 0;
-
     int endOfLine = s.indexOf(separator);
     if (endOfLine == -1) {
       sta = state.stateError;

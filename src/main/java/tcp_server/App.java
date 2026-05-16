@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class App {
   public static void main(String[] args) {
-    BlockingQueue<String> channel = new LinkedBlockingQueue<>();
+    BlockingQueue<Request> channel = new LinkedBlockingQueue<>();
 
     Producer producer = new Producer(channel);
     Consumer consumer = new Consumer(channel);
