@@ -42,7 +42,9 @@ public class ParseHeader {
         return null;
       }
       header = parseHeader(strBuff.substring(0, indx));
-      header.setLen(indx + rn.length());
+      if (header != null) {
+        header.setLen(indx + rn.length());
+      }
       return header;
     }
     return null;

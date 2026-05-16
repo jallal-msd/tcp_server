@@ -15,7 +15,8 @@ public class ParseHeaderTest {
     Header header = ParseHeader.parse(s.getBytes());
     assertEquals("Host", header.getName());
     assertEquals("localhost:8000", header.getValue());
-    assertEquals("20", header.getLen());
+    assertEquals(24, header.getLen());
+
   }
 
   @Test
@@ -23,5 +24,12 @@ public class ParseHeaderTest {
     String s = "\r\n\r\n";
     Header header = ParseHeader.parse(s.getBytes());
     assertNull(header);
+  }
+
+  @Test
+  public void testWsParseHeader() {
+    String st = "Host : localhost:8000\r\n\r\n";
+    Header header1 = ParseHeader.parse(st.getBytes());
+    assertNull(header1);
   }
 }
