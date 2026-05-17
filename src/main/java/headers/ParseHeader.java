@@ -9,10 +9,9 @@ public class ParseHeader {
 
   public static String rn = "\r\n";
 
-  public static HashMap<String, Header> parseHeader(String fieldLine) {
+  public static HashMap<String, Header> parseHeader(String fieldLine, HashMap<String, Header> headerMap) {
     System.out.println(fieldLine);
     Header header = new Header();
-    HashMap<String, Header> headerMap = new HashMap<>();
     List<String> parts = Arrays.asList(fieldLine.split(":", 2));
     if (parts.size() != 2) {
       System.err.println("malformed");
@@ -21,10 +20,22 @@ public class ParseHeader {
     System.out.println(parts.get(0));
 
     String name = parts.get(0);
-    header.setName(parts.get(0));
-    header.setValue(parts.get(1).trim());
-    System.out.println("-- " + name);
-    headerMap.put(name, header);
+    if (headerMap.containsKey(name)) {
+      System.out.println("yes it exists");
+      Header existingHeader = headerMap.get(name);
+      String existingValue = existingHeader.getValue();
+      existingHeader.setName(name);
+      existingHeader.setValue(String.format("%s, %s", existingValue, parts.get(1).trim()));
+      header = existingHeader;
+
+      headerMap.put(name, existingHeader);
+
+    } else {
+      header.setName(parts.get(0));
+      header.setValue(parts.get(1).trim());
+      System.out.println("-- " + name);
+      headerMap.put(name, header);
+    }
 
     if (Character.isWhitespace(header.getName().charAt(header.getName().length() - 1))) {
       System.err.println("white space after name , malformed");
@@ -56,7 +67,11 @@ public class ParseHeader {
         return listHeader;
 
       }
-      parseHeader(chuckOfStr.substring(0, indx));
+      HashMap<String, Header> res = parseHeader(chuckOfStr.substring(0, indx), header);
+      if (res != null) {
+        listHeader.add(res);
+      }
+
       idx += indx + rn.length();
 
       if (header != null) {

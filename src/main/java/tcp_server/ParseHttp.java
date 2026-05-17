@@ -1,17 +1,12 @@
 package tcp_server;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Array;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JPopupMenu.Separator;
+import headers.*;
 
 class ParseHttp {
 
@@ -20,6 +15,7 @@ class ParseHttp {
   enum state {
     stateInit,
     stateDone,
+    stateHeaders,
     stateError
   }
 
@@ -45,6 +41,9 @@ class ParseHttp {
         case stateInit:
           request = parse(new String(buff));
           break;
+        case stateHeaders:
+          request.setListHeadersMap(ParseHeader.parse(buff));
+          sta = state.stateDone;
         case stateDone:
           break outer;
       }
@@ -77,7 +76,7 @@ class ParseHttp {
       requestLine.setTarget(parts.get(1));
       requestLine.setHttpVersion(parts.get(2).split("/")[1]);
       // requestLine.setRestOfMessage(restOfMessage);
-      sta = state.stateDone;
+      sta = state.stateHeaders;
     }
 
     Request request = new Request();

@@ -1,9 +1,16 @@
 package tcp_server;
 
+import java.util.HashMap;
+import java.util.List;
+
+import headers.*;
+
 public class Request {
 
   private int index;
   private RequestLine requestLine;
+  private HashMap<String, Header> mapHeaders;
+  private List<HashMap<String, Header>> listHeadersMap;
 
   public Request() {
   }
@@ -16,6 +23,14 @@ public class Request {
     return requestLine;
   }
 
+  public List<HashMap<String, Header>> getListHeadersMap() {
+    return listHeadersMap;
+  }
+
+  public HashMap<String, Header> getMapHeaders() {
+    return mapHeaders;
+  }
+
   public void setIndex(int index) {
     this.index = index;
   }
@@ -24,4 +39,11 @@ public class Request {
     this.requestLine = requestLine;
   }
 
+  public void setMapHeaders(HashMap<String, Header> mapHeaders) {
+    this.mapHeaders = mapHeaders;
+  }
+
+  public void setListHeadersMap(List<HashMap<String, Header>> listHeadersMap) {
+    this.listHeadersMap = listHeadersMap;
+  }
 }

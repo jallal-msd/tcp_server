@@ -39,4 +39,14 @@ public class ParseHeaderTest {
     List<HashMap<String, Header>> headers = ParseHeader.parse(s.getBytes());
     assertEquals(0, headers.size());
   }
+
+  @Test
+  public void testSameHeaderNameParseHeader() {
+    String s = "Host: localhost:8000\r\nHost: localhost:8080\r\n\r\n";
+    List<HashMap<String, Header>> headers = ParseHeader.parse(s.getBytes());
+    for (HashMap<String, Header> header : headers) {
+      assertEquals("Host", header.get("Host").getName());
+      assertEquals("localhost:8000, localhost:8080", header.get("Host").getValue());
+    }
+  }
 }
