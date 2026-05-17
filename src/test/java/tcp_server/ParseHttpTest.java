@@ -24,18 +24,18 @@ class ParseHttpTest {
 
     assertEquals("POST", request.getRequestLine().getHttpMethod());
     assertEquals("/coffe", request.getRequestLine().getTarget());
-    for (HashMap<String, Header> header : request.getListHeadersMap()) {
-      assertEquals("Host", header.get("Host").getName());
-      assertEquals("localhost:8000", header.get("Host").getValue());
-      assertEquals("User-Agent", header.get("User-Agent").getName());
-      assertEquals("curl/4.1.16", header.get("User-Agent").getValue());
-      assertEquals("Accept", header.get("Accept").getName());
-      assertEquals("*/*", header.get("Accept").getValue());
-      assertEquals("Content-Type", header.get("Content-Type").getName());
-      assertEquals("application/json", header.get("Content-Type").getValue());
-      assertEquals("Content-Length", header.get("Content-Length").getName());
-      assertEquals("123", header.get("Content-Length").getValue());
-    }
+    HashMap<String, Header> header = request.getMapHeaders();
+    assertEquals("Host", header.get("Host").getName());
+    assertEquals("localhost:8000", header.get("Host").getValue());
+    assertEquals("User-Agent", header.get("User-Agent").getName());
+    assertEquals("curl/4.1.16", header.get("User-Agent").getValue());
+    assertEquals("Accept", header.get("Accept").getName());
+    assertEquals("*/*", header.get("Accept").getValue());
+    assertEquals("Content-Type", header.get("Content-Type").getName());
+    assertEquals("application/json", header.get("Content-Type").getValue());
+    assertEquals("Content-Length", header.get("Content-Length").getName());
+    assertEquals("123", header.get("Content-Length").getValue());
+
     // assertEquals("1.1", request.getRequestLine().getHttpVersion());
   }
 }

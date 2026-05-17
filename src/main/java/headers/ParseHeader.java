@@ -21,7 +21,6 @@ public class ParseHeader {
 
     String name = parts.get(0);
     if (headerMap.containsKey(name)) {
-      System.out.println("yes it exists");
       Header existingHeader = headerMap.get(name);
       String existingValue = existingHeader.getValue();
       existingHeader.setName(name);
@@ -40,17 +39,17 @@ public class ParseHeader {
     if (Character.isWhitespace(header.getName().charAt(header.getName().length() - 1))) {
       System.err.println("white space after name , malformed");
       return null;
+
     }
     return headerMap;
 
   }
 
-  public static List<HashMap<String, Header>> parse(byte[] buff) {
+  public static HashMap<String, Header> parse(byte[] buff) {
     boolean done = false;
 
     int idx = 0;
     HashMap<String, Header> header = new HashMap<>();
-    List<HashMap<String, Header>> listHeader = new ArrayList<>();
     int indx = 0;
     String strBuff = new String(buff);
     while (!done) {
@@ -64,13 +63,10 @@ public class ParseHeader {
         System.out.println("found 0 ");
         // empty header, first index is \r\n
         done = true;
-        return listHeader;
+        return header;
 
       }
-      HashMap<String, Header> res = parseHeader(chuckOfStr.substring(0, indx), header);
-      if (res != null) {
-        listHeader.add(res);
-      }
+      parseHeader(chuckOfStr.substring(0, indx), header);
 
       idx += indx + rn.length();
 

@@ -15,38 +15,33 @@ public class ParseHeaderTest {
   @Test
   public void testParseHeader() {
     String s = "Host: localhost:8000\r\nFOOF: s\r\n\r\n";
-    List<HashMap<String, Header>> headers = ParseHeader.parse(s.getBytes());
-    for (HashMap<String, Header> header : headers) {
+    HashMap<String, Header> header = ParseHeader.parse(s.getBytes());
 
-      assertEquals("Host", header.get("Host").getName());
-      assertEquals("localhost:8000", header.get("Host").getValue());
-      assertEquals("FOOF", header.get("FOOF").getName());
-      assertEquals("s", header.get("FOOF").getValue());
-    }
+    assertEquals("Host", header.get("Host").getName());
+    assertEquals("localhost:8000", header.get("Host").getValue());
+    assertEquals("FOOF", header.get("FOOF").getName());
+    assertEquals("s", header.get("FOOF").getValue());
 
   }
 
-  @Test
   public void testEmptyParseHeader() {
     String s = "\r\n\r\n";
-    List<HashMap<String, Header>> headers = ParseHeader.parse(s.getBytes());
-    assertEquals(0, headers.size());
+    HashMap<String, Header> header = ParseHeader.parse(s.getBytes());
+    assertEquals("{}", header);
   }
 
-  @Test
   public void testWsParseHeader() {
     String s = "Host : localhost:8000\r\n\r\n";
-    List<HashMap<String, Header>> headers = ParseHeader.parse(s.getBytes());
-    assertEquals(0, headers.size());
+    HashMap<String, Header> header = ParseHeader.parse(s.getBytes());
+    assertNull(header);
   }
 
   @Test
   public void testSameHeaderNameParseHeader() {
     String s = "Host: localhost:8000\r\nHost: localhost:8080\r\n\r\n";
-    List<HashMap<String, Header>> headers = ParseHeader.parse(s.getBytes());
-    for (HashMap<String, Header> header : headers) {
-      assertEquals("Host", header.get("Host").getName());
-      assertEquals("localhost:8000, localhost:8080", header.get("Host").getValue());
-    }
+    HashMap<String, Header> header = ParseHeader.parse(s.getBytes());
+    assertEquals("Host", header.get("Host").getName());
+    assertEquals("localhost:8000, localhost:8080", header.get("Host").getValue());
+
   }
 }

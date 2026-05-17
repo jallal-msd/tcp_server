@@ -42,7 +42,7 @@ class ParseHttp {
           request = parse(new String(buff));
           break;
         case stateHeaders:
-          request.setListHeadersMap(ParseHeader.parse(buff));
+          request.setMapHeaders(ParseHeader.parse(buff));
           sta = state.stateDone;
         case stateDone:
           break outer;
